@@ -1,0 +1,75 @@
+<!doctype html>
+<head>
+<link rel='stylesheet' href='../css/common.css'>
+<title>navigator.xr in dedicated worker</title>
+</head>
+<body>
+<header>
+<details open>
+<summary>Immersive VR Session Using Worker</summary>
+<p>
+    This sample demonstrates how to use an 'immersive-vr' XRSession to
+    present a simple WebGL scene to an XR device with the help of a
+    dedicated worker. The scene is not rendered to the page.
+    <a class="back" href="./">Back</a>
+</p>
+</details>
+</header>
+<pre></pre>
+<main style='text-align: center;'>
+    <p>Click 'Enter XR' to see content</p>
+</main>
+<script type="module">
+import {WebXRButton} from '../js/util/webxr-button.js';
+
+var pre = document.querySelector('pre');
+var xrButton;
+var worker;
+try {
+    worker = new Worker('../js/worker-navigator-xr.js', { type: 'module' });
+} catch(e) {
+    pre.textContent += '\nnew Worker threw: ' + e.message;
+}
+if (worker) {
+  worker.onmessage = function(e) {
+    let type = e.data[0];
+    switch(type) {
+        case 'is-session-supported':
+            let supported = e.data[1];
+            CALLBACKS.isSessionSupported(supported);
+        break;
+
+        default:
+            console.log('Not supported msg type.');
+        break;
+    }
+  }
+}
+const CALLBACKS = {
+onInit : () => {
+    if (worker) worker.postMessage(['is-session-supported']);
+},
+isSessionSupported : supported => {
+    xrButton.enabled = supported;
+},
+onRequestSession : () => {
+    if (worker) worker.postMessage(['requestSession']);
+}
+};
+function enterVR() {
+  if (worker) worker.postMessage(1);
+}
+function init() {
+    // Adds a helper button to the page that indicates if any XRDevices are
+    // available and let's the user pick between them if there's multiple.
+    xrButton = new WebXRButton({
+      onRequestSession: CALLBACKS.onRequestSession,
+      onEndSession: null
+    });
+    document.querySelector('header').appendChild(xrButton.domElement);
+
+    CALLBACKS.onInit();
+}
+init();
+</script>
+</body>
