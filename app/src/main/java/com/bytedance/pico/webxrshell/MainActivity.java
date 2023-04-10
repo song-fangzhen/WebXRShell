@@ -1,36 +1,24 @@
 package com.bytedance.pico.webxrshell;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
-import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.bytedance.webxr.launcher.LoadingInfo;
 import com.bytedance.webxr.launcher.LoadingPicMaker;
 import com.bytedance.webxr.launcher.WebViewSettingUtils;
 import com.bytedance.webxr.launcher.WebXRActivity;
 import com.bytedance.webxr.launcher.XRPosition;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
 
 public class MainActivity extends WebXRActivity {
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
-
   @Override
   public void onInitWebXR(@NonNull WebView webView) {
     WebView.setWebContentsDebuggingEnabled(true);
@@ -69,7 +57,6 @@ public class MainActivity extends WebXRActivity {
     envInfo.setContext(this);
     envInfo.setSplashIconId(R.drawable.webxr_shell);
     envInfo.setSplashTitle("WebXRShell");
-    envInfo.setEnableBackButton(false);
     LoadingPicMaker lp = new LoadingPicMaker(envInfo);
     return lp.generateLoadingBitmaps();
   }
@@ -84,12 +71,12 @@ public class MainActivity extends WebXRActivity {
     return new XRPosition(2160, 2160, 0, -0.2f, -0.5f, 1, 1, 1);
   }
 
-    private static String getMimeType(@Nullable String url) {
-        String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-        return type;
+  private static String getMimeType(@Nullable String url) {
+    String type = null;
+    String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    if (extension != null) {
+      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
+    return type;
+  }
 }
