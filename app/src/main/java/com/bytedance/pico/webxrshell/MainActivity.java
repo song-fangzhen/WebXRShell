@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class MainActivity extends WebXRActivity {
+  // Here we can make some initial configurations for the WebView.
   @Override
   public void onInitWebXR(@NonNull WebView webView) {
     WebView.setWebContentsDebuggingEnabled(true);
@@ -51,6 +52,9 @@ public class MainActivity extends WebXRActivity {
         "https://webxr-samples.local/tests/navigation/immersive-vr-session.html");
   }
 
+  // The loading bitmap configurations are made here. You should provide the
+  // related Context, Splash icon id and title to the `LoadingInfo`, then use
+  // `LoadingPicMaker` to generate the final pictures.
   @Override
   public Bitmap[] loadWebXRLoadingBitmaps() {
     LoadingInfo envInfo = new LoadingInfo();
@@ -61,11 +65,15 @@ public class MainActivity extends WebXRActivity {
     return lp.generateLoadingBitmaps();
   }
 
+  // Configure whether to enable the experimental Navigation feature.
   @Override
   public boolean enableExperimentalNavigation() {
     return true;
   }
 
+  // Configure where to layout the WebView. The parameters of XRPosition are
+  // (width, height, translate_x, translate_y, translate_z, scale_x, scale_y,
+  // scale_z).
   @Override
   public XRPosition onLayout() {
     return new XRPosition(2160, 2160, 0, -0.2f, -0.5f, 1, 1, 1);
