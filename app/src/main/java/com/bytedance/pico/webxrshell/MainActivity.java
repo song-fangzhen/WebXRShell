@@ -1,6 +1,8 @@
 package com.bytedance.pico.webxrshell;
 
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceRequest;
@@ -19,6 +21,15 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class MainActivity extends WebXRActivity {
+  // Here we can make some initial configurations for the container, such as
+  // setting controller models.
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    setControllers();
+  }
+
   // Here we can make some initial configurations for the WebView.
   @Override
   public void onInitWebXR(@NonNull WebView webView) {
@@ -86,5 +97,36 @@ public class MainActivity extends WebXRActivity {
       type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
     return type;
+  }
+
+  private void setControllers() {
+    final String CONTROLLER_PATH_PREFIX = "file:///android_asset/controllers/";
+    final String PICO_NEO3_PATH = "vr_controller_piconeo3";
+    final String PICO4_PATH = "vr_controller_pico4";
+    final String OCULUS_QUEST_PATH = "vr_controller_oculusquest";
+    final String OCULUS_QUEST2_PATH = "vr_controller_oculusquest2";
+    final String LEFT_PATH = "_left";
+    final String RIGHT_PATH = "_right";
+    final String CONTROLLER_PATH_SUFFIX = ".obj";
+    final String PICO_NEO3_DEVICE = "PICOA7H10";
+    final String PICO4_DEVICE = "PICOA8110";
+
+    String vendorPath = "";
+    float controllerScale = 0.01f;
+    if (PICO_NEO3_DEVICE.equals(Build.DEVICE)) {
+      vendorPath = PICO_NEO3_PATH;
+    } else if (PICO4_DEVICE.equals(Build.DEVICE)) {
+      vendorPath = PICO4_PATH;
+    } else if ("oculus".equals(Build.BRAND)) {
+      // TODO: Get oculus devices' info to determine which controller to use.
+      vendorPath = OCULUS_QUEST_PATH;
+      controllerScale = 1f;
+    }
+    String leftControllerPath = CONTROLLER_PATH_PREFIX + vendorPath +
+                                LEFT_PATH + CONTROLLER_PATH_SUFFIX;
+    String rightControllerPath = CONTROLLER_PATH_PREFIX + vendorPath +
+                                 RIGHT_PATH + CONTROLLER_PATH_SUFFIX;
+
+    setControllers(leftControllerPath, rightControllerPath, controllerScale);
   }
 }
